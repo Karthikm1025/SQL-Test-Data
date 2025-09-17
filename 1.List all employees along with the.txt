@@ -1,0 +1,14 @@
+1.List all employees along with their department names
+2.Show each employee's title and salary.
+3.Find all department managers and their department names.
+4.List employees who work in the same department as their manager.
+5.Find departments with more than one employee.
+6.Show the highest salary in each department.
+7.Find employees whose salary is above the average salary of their department.
+8.List departments that do not have a manager assigned.
+9.Show employees who have the same title but work in different departments.
+
+
+1001	t001	1980-01-01	Alice	Smith	F	2005-06-01
+1002	t002	1975-05-15	Bob	Johnson	M	2008-09-15
+13001	e0005	1975-06-15	Alice	Johnson	F	2005-03-01
