@@ -1,0 +1,111 @@
+1.Fetch female atheletes in a separate table name as female_person
+
+
+select * from person where gender = 'F' 
+create table female_person4 as (select * from person where gender = 'F')
+
+select * from female_person
+
+select * from sport where sport_name = 'Athletics'
+
+select Full_name, gender, sport_name from person p join games_competitor gc on p.id=gc.person_id
+join competitor_event ce on gc.id=ce.competitor_id
+join event e on ce.event_id=e.id
+join sport s on e.sport_id=s.id where gender = 'F' and sport_name = 'Athletics'
+
+create table Female_Person$ as (select Full_name, gender, sport_name from person p join games_competitor gc on p.id=gc.person_id
+join competitor_event ce on gc.id=ce.competitor_id
+join event e on ce.event_id=e.id
+join sport s on e.sport_id=s.id where gender = 'F' and sport_name = 'Athletics')
+
+select * from Female_Person$
+
+ doubt on below query
+2. Fetch participants who won gold medal from Norway,America,Australia
+
+select  distinct full_name,medal_name,region_name from person p join person_region pr on p.id=pr.person_id
+join noc_region nc on pr.region_id=nc.id
+join games_competitor gc on p.id=gc.person_id
+join competitor_event ce on gc.id=ce.competitor_id
+join medal m on ce.medal_id = m.id where medal_name = 'Gold' and  region_name in ('Norway','America','Australia') order by full_name
+
+3. Fetch Participants whose name starts with 'A' including countries
+
+
+select full_name,region_name from person p join person_region pr on p.id=pr.person_id
+join noc_region nc on pr.region_id=nc.id where full_name like ('A%')
+
+4.Fetch participants who has took part in any game but have not won any medals
+
+
+select p.id,p.full_name,gc.games_id,g.games_name,m.medal_name from person p join games_competitor gc on p.id=gc.person_id
+join games g on gc.games_id=g.id
+join competitor_event ce on gc.id=ce.competitor_id
+join medal m on ce.medal_id=m.id where Medal_Name = 'NA' order by full_name
+
+
+select  full_name, medal_name from (select full_name,games_name,medal_name from person p join person_region pr on p.id=pr.person_id
+join noc_region nc on pr.region_id=nc.id
+join games_competitor gc on p.id=gc.person_id
+join competitor_event ce on gc.id=ce.competitor_id
+join medal m on ce.medal_id = m.id
+join games g on gc.games_id = g.id group by games_name, full_name,medal_name)a  where medal_name='NA' order by full_name
+
+5.Fetch the total medal tally for each country and rank them in descending order.
+
+select Region_name,count,rank() over (order by count desc)as rank 
+from (select Region_name, count(medal_name) as count from person p join games_competitor gc on p.id=gc.person_id
+join games g on gc.games_id=g.id
+join competitor_event ce on gc.id=ce.competitor_id
+join medal m on ce.medal_id=m.id
+join person_region pr on p.id=pr.person_id
+join noc_region nc on pr.region_id=nc.id where medal_name!='NA' group by Region_name order by Region_name)a 
+
+
+doubt on this below query on the count column 
+
+6. Fetch participants who won medals in more than one year's olympics.
+select full_name, count(*) as count from (select games_year, full_name, count(*) as count1 from 
+(select p.full_name, g.games_year from person p
+join games_competitor gc on p.id=gc.person_id
+join competitor_event ce on gc.id=ce.competitor_id
+join games g on gc.games_id=g.id
+join medal m on ce.medal_id=m.id where medal_name!='NA' )a group by games_year, full_name order by games_year)b group by full_name having count(*)>1 ;
+
+7.Fetch participants who won more than one medals in the same year.
+
+
+
+
+
+Paavo Johannes Aaltonen	1948
+Paavo Johannes Aaltonen	1948
+Paavo Johannes Aaltonen	1948
+Paavo Johannes Aaltonen	1948
+
+
+Albert Helgerud (Thorvaldsen-)	Gold	Norway
+
+
+
+
+
+Christine Jacoba Aaftink	1988
+Christine Jacoba Aaftink	1988
+
+
+select person_id,count(*) from games_competitor group by person_id order by count(*) desc;
+
+
+select * from person where id=71236;
+
+select * from games_competitor where person_id=71236;
+
+
+
+
+
+
+
+
+

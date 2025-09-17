@@ -1,0 +1,255 @@
+SQL & unix training
+ pwd Maveric@123
+
+new sql installed july 2024 
+
+
+Day 1
+
+
+SQL command
+DDL - create, drop, alter, truncate
+DML - insert, update, delete
+DCL - Grant, revoke
+TCL - commit, Rollback, save point
+DQL - save
+
+Constraints - SQL constraints are used to specify rules for the data in a table.
+
+NOT NULL - Ensures that a column cannot have a NULL value
+UNIQUE - Ensures that all values in a column are different
+PRIMARY KEY - A combination of a NOT NULL and UNIQUE. Uniquely identifies each row in a table
+FOREIGN KEY - Prevents actions that would destroy links between tables
+CHECK - Ensures that the values in a column satisfies a specific condition
+DEFAULT - Sets a default value for a column if no value is specified
+CREATE INDEX - Used to create and retrieve data from the database very quickly
+
+Primary key - Primary keys must contain UNIQUE values, and cannot contain NULL values.
+
+FOREIGN key - The FOREIGN KEY constraint is used to prevent actions that would destroy links between tables.
+
+The table with the foreign key is called the child table, and the table with the primary key is called the referenced or parent table.
+
+The FOREIGN KEY constraint prevents invalid data from being inserted into the foreign key column, because it has to be one of the values contained in the parent table.
+
+
+
+Here are the different types of the JOINs in SQL:
+
+(INNER) JOIN: Returns records that have matching values in both tables
+LEFT (OUTER) JOIN: Returns all records from the left table, and the matched records from the right table
+RIGHT (OUTER) JOIN: Returns all records from the right table, and the matched records from the left table
+FULL (OUTER) JOIN: Returns all records when there is a match in either left or right table
+
+
+
+create table table name()
+
+insert into table values()
+
+create table maveric(empid number(111), employee name varchar(50), salary number, age(111));
+
+insert into maveric values(7507, karthik, 200000, 24);
+
+select * from maveric
+
+To create a new table as it like other table
+
+create table zoho as select * from  maveric;
+
+
+To create structure of the table do not want to copy the date in the table pfb query
+
+create table zoho as select * from maveric where 1=2;
+
+
+To take specific data from the another table 
+
+create table zoho as select from * maveric where age = 24;
+
+To insert data as like in other table find the below one
+
+insert into zoho select * from maveric
+
+SQL constraints
+
+not null - ensures column cannot not have null values
+defaul null - sets default value for the column if no value is specified
+unique - ensure all values in the column are different 
+
+alter table temp1 rename column empid to id:
+
+delete table temp1 where empid = 101
+
+update table_name set column_name=(value) where coulum_name=(value)
+
+
+
+select column_ name(s) from table 1 inner join table 2 on table 1. column_name = table 2. column_name;
+
+SELECT column_name(s)
+FROM table1
+INNER JOIN table2
+ON table1.column_name = table2.column_name;
+
+
+
+
+Day 2
+
+CREATE TABLE Employee (
+  EmpId number,
+  EmpName varchar(255) default NULL,
+  Age number,
+  Department varchar(255),
+  Salary varchar2(50) default NULL,
+  Address varchar2(255) default NULL,
+  PRIMARY KEY (EmpId)
+);
+
+ 
+
+Insert into Employee values (1,'Arun',29,'Testing',20000,'Chennai');
+Insert into Employee values (2,'Raju',26,'Dev',40000,'Chennai');
+Insert into Employee values (3,'Praveen',30,'Testing',50000,'Bangalore');
+Insert into Employee values (4,'Prabhu',26,'Devops',70000,'Bangalore');
+Insert into Employee values (5,'Deepa',26,'Devops',70000,'Mumbai');
+Insert into Employee values (6,'Priya',26,'Testing',65000,'Mumbai');
+Insert into Employee values (7,'Preetha',26,'Testing',80000,'Mumbai');
+Insert into Employee values (8,'Mani',26,'Dev',40000,'Chennai');
+Insert into Employee values (9,'Balu',26,'Dev',60000,'Chennai');
+Insert into Employee values (10,'John',26,'Devops',40000,'Chennai');
+
+
+Queries to be noted
+
+1. select* from Employee where Department in ('testing');
+
+2. select* from Employee where salary  between '20000 and 40000';
+
+3. selet* from Employee where address like ('c%');
+
+4. selet* from Employee where address not like ('c%');
+
+5.select* from Employee where salary = any(select salary from Employee where address not like ('c%');
+
+6. select* from Employee order by salary desc;
+
+7. select* from Employee order by salary desc offset 2 rows fetch next 4 rows only;
+
+8.  select Department, max(salary), as maximum from Employee group by departmet having max (salary)>= 40000;
+
+9. select* from table1           select* from table1
+
+   union                             intersect
+   
+                                  select* from table2
+   Select* from table2
+
+   
+ 10. select* from Eployee order by salary fetch next 5 rows with ties;
+ 
+ 11. select EmpName, Department, salary, rank()over (order by salary) from Employee;
+ 
+ 12.select* from (select EmpName, Department, salary, dense rank()over (order by salary) as r from Employee ) a where r=3;
+   
+
+
+day 3
+
+Get the employees with maximum salary in each department.If there is more than one employee with same salary in a department,display the employee whose empname comes first in that department(alphabetical order)
+
+select empname,salary,rank 
+from (select empname,empid,salary,rank() over (partition by department order by salary desc ,empname) as rank
+ from employee)where rank=1
+
+case statement 
+
+select * from (select full_name,height,gender,
+case when height =0 or height <160 then 'not eligible' else
+'eligible' end as qualification from person where gender ='F') a  where qualification ='eligible'
+
+
+
+
+
+day 4
+
+
+select round(salary,2),salary from table_name
+select ceil (salary,2),salary from table_name
+select floor(salary,2),salary from table_name
+if salary is 10888.04 means
+if we use ceil will give result as 10889
+if we use floor will give result as 10888
+
+if data is null in name colum of a table
+select nvl(name,'default')from table
+will give result as default in the place of null 
+
+select lower(name),upper(name),initcap(name) from table_name
+
+this will give result as lower - display name with small letters
+upper(will display name with capital letters)
+initcap will display name as first alone capital 
+
+select replace (name, 'a', 'b') from table_name
+this will replace the letter with b instead of a
+
+select length(name) from table_name
+will give result of how many letters in the each name column
+
+
+interview question asked for arun
+
+
+boat
+mongo
+lemon
+boat
+tomoto
+
+No of time o present in the above table
+
+create table karthik(name varchar(50))
+
+insert into karthik values ('mongo');
+insert into karthik values ('lemon');
+insert into karthik values ('tomoto');
+
+select * from karthik;
+
+select length(name)-length(replace(name,'o','')) as No_of_times_o from karthik;
+
+
+
+day 5
+
+select extract(year,birth_date)as birth_year from table_name
+select extract(month,birth_date)as birth_month from table_name
+
+if a table is created with date column that date column data type is given as varchar if need to change it to date format find the below query
+
+select to date(birth_date,'dd-mm-yyyy')as birth_date from table_name
+
+to add months in date column find the below query
+
+select hired_date,birthdate,add_months(hire_date,24) as added_date from table_name
+
+lead and lag function
+
+
+select emp_no,lead(emp_salary) over(order by salary desc) as lead_emp_salary from table_name
+
+select emp_no,lead(emp_salary, 2) over(order by salary desc) as lead_emp_salary from table_name 
+
+select emp_no,lag(emp_salary) over(order by salary desc) as lead_emp_salary from table_name
+
+select emp_no,lag(emp_salary, 1) over(order by salary desc) as lead_emp_salary from table_name
+
+992 6159 0917
+pwd - 008211
+
+
+
+https://hsbc.zoom.us/j/99261590917?pwd=V0pvdHZzTzVIR0NGNXVocGNXd2kyZz09

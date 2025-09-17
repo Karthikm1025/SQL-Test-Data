@@ -1,0 +1,253 @@
+ Assessment 1 problems practising 09/01/2023
+ 
+ 1,Select the female employee and male employee with maximum salary for each department and identify the difference between the two.
+ 
+ select k.dept_name,male_max_salary,female_max_salary,male_max_salary-female_max_salary as difference from 
+(select gender,dept_name, max(emp_salary) as male_max_salary from sqltest1 where gender = 'M' group by gender,dept_name order by dept_name) k
+join
+(select gender,dept_name, max(emp_salary) as female_max_salary from sqltest1 where gender = 'F' group by gender,dept_name order by dept_name ) m on k.dept_name=m.dept_name
+
+2, Find the maximum salary of managers from each department and rank them(maximum salary should be rank 1
+
+select dept_name,max_salary,rank() over (order by max_salary desc) as rank from  (select designation, dept_name,max(Emp_salary)as max_salary from sqltest1 where designation = 'Manager' group by dept_name,designation order by dept_name) a
+
+
+3.Write a query to display the employee details in the below format
+
+	1.Employeename(jobtitle) eg. Arunkumar(Tester)
+	2.Employeename(Salary)   eg. Arunkumar(50000)   (Both the statements in the same query)
+    
+    select * from sqltest1;
+    
+    select emp_title,emp_salary from (select concat(concat1,concat2) as emp_title ,empid from (select concat(Emp_name,'(') as concat1, concat(designation,')') as concat2, empid from sqltest1))a
+    join
+    (select concat(concat1,concat2) as emp_salary , empid from (select concat(emp_name,'(') as concat1,concat(emp_salary,')') as concat2,empid from sqltest1)) b on a.empid=b.empidx
+	
+
+4.Display the salary as null for employees who has salary lesser than 60000,
+If it is greater than 60000 employee salary should be displayed as it is (result should have employee name and salary)
+
+select * from sqltest1;
+
+select emp_name,emp_salary,case when emp_salary <60000 then null else emp_salary end as salary_result from sqltest1;
+
+
+5.select * from (select title, salary, rank()over (order by salary ) as rank from 
+(select title,sum(salary)as salary from employees e join salaries s on e.emp_no=s.emp_no        
+join titles t on e.emp_title_id=t.title_id group by title)a) b where rank = 1
+
+select * from (select designation,salary,rank() over(order by salary) as rank from 
+(select designation,sum(emp_salary)as salary from sqltest1 group by designation))a where rank=1
+
+
+6. Rank employees based on first letter of their first name
+
+for example: if the total employees name starts with A is 10 and Employees name starts with B is 20
+
+Result will be like B 20 1 , A 10 2 (B is rank 1 and A is rank 2)
+
+
+select first_letter,count,rank() over (order by count desc) as rank from 
+(select substr(first_name,1,1) as first_letter,count(*) as count from employees group by substr(first_name,1,1)) a
+
+
+Assessment 2 problems practising 10/01/2023
+
+1. Select students who has read more books in library and rank them in descending.
+
+select studentid,students_name,read_books,dense_rank() over (order by read_books desc) as rank from (select s.studentid as studentid, s.name as students_name, count(*) as read_books from students s join borrows br on s.studentid=br.studentid 
+join books bk on br.bookid=bk.bookid group by s.studentid,s.name order by s.name)
+
+
+2. Select the top three type of book that was most read by the students.
+
+select t.name as title,count(*) as count from  students s join borrows br on s.studentid=br.studentid 
+join books bk on br.bookid=bk.bookid
+join types t on bk.typeid=t.typeid group by t.name order by count desc fetch first 3 rows only
+
+3.Get students fine for returning the after 15 days.Fine would be 5 rupees for each day delayed after 15th day.
+(Say for example if a student returns the book after 20days,fine for him would be 25 rupees)
+
+select roll_no, student_name,sum(fine_amt)as Total_fine from (select Roll_no, student_name,dayskept, case when dayskept > 15 then dayskept *5 else 0 end as fine_amt from 
+(select s.studentid as Roll_No,s.name as student_name,b.broughtdate-b.takendate as dayskept from students s join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid) where dayskept >15)b group by roll_no,student_name order by total_fine desc
+
+
+4.Select students who has bought books and not returned for 15days or more for 3 times for barring from library.
+select roll_no,studentname from
+(select s.studentid as Roll_no,s.name as studentname, br.broughtdate-br.takendate as dayskept 
+from  students s join borrows br on s.studentid=br.studentid 
+join books bk on br.bookid=bk.bookid where br.broughtdate-br.takendate >15) a group by roll_no,studentname having count(*) >3 order by studentname
+
+
+
+5.Select students who has bought an authors different books for more than 2 times(>2) from the library.
+
+select studentid,student_name,author_name,count(*) as diff_bk_count from (select s.studentid as studentid,s.name as student_name,bk.name as book_name,a.name as author_name, count(*) as count from  students s join borrows br on s.studentid=br.studentid 
+join books bk on br.bookid=bk.bookid
+join authors a on bk.authorid=a.authorid  group by s.studentid,s.name,bk.name,a.name )a group by studentid,student_name,author_name having count(*) >2
+
+6. Select students who bought the same book for more than 1 time from library
+
+select s.studentid as studentid,s.name as student_name,bk.name as book_name, count(*) as count from  students s join borrows br on s.studentid=br.studentid 
+join books bk on br.bookid=bk.bookid
+join authors a on bk.authorid=a.authorid  group by s.studentid,s.name,bk.name having count(*) >1 order by s.name
+
+7.Select students who has born on 2001 and has boughts book for more than 6 times from library.
+
+select studentid,student_name,birth_year,count(*) as count from (select s.studentid as studentid,s.name as student_name, extract (year from birthdate) as birth_year from  students s join borrows br on s.studentid=br.studentid 
+join books bk on br.bookid=bk.bookid
+join authors a on bk.authorid=a.authorid)where birth_year=2001  group by studentid,student_name,birth_year having count(*) >6 order by student_name
+
+8.Select the total pages read by a student of all the bookes he has taken from the library and rank it in descending order
+(Say if a student takes 10 books from library,out of which he has taken 1 book 2times then you should count the total pages for 9 books that he read)
+
+
+select studentid,student_name,sum(pagecount),dense_rank() over (order by sum(pagecount) desc) as rank from
+(select s.studentid as studentid,s.name as student_name,bk.name as bk_name,bk.pagecount as pagecount,count(*) as count from students s join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid group by s.studentid,s.name,bk.name,bk.pagecount having count(*) =1) a group by studentid,student_name
+
+
+
+9. Select the total books read by students born in a particular year
+(if a student read the book more than 1 time,one count should be taken into account)
+
+select born_year, sum(count)as total_books_taken
+from (select s.studentid as studentid,s.name as student_name,count(*) as count,extract(year from birthdate) as born_year 
+from students s join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid group by s.studentid,s.name,s.birthdate having count(*) >1 order by s.name) a group by  born_year
+
+
+21/01/2023
+
+select * from Employee_Info
+
+select * from EmployeePosition
+
+
+1.Write a query to fetch the EmpFname from the EmployeeInfo table in the upper case and use the ALIAS name as EmpName.
+
+select upper (Empfname) as empname from employee_info
+
+
+2.select count(*) as No_of_employees  from employee_info where department = 'HR'
+
+3. Write a query to retrieve the first four characters of  EmpLname from the EmployeeInfo table.
+
+select substr(emplname,1,4) from employee_info
+
+4.Write a query to fetch only the place name(string before brackets) from the Address column of EmployeeInfo table.
+
+5,Write a query to create a new table which consists of data and structure copied from the other table.
+ 
+ create table mav as (select * from employee_info)
+ 
+ 6.Write q query to find all the employees whose salary is between 50000 to 100000.
+ 
+ select * from EmployeePosition where salary between 50000 and 100000
+ 
+ 7. Write a query to find the names of employees that begin with ‘S’
+
+select * from employee_info where empfname like '%S'
+
+8. Write a query to fetch only the place name(string before brackets) from the Address column of EmployeeInfo table
+
+select substr(address,1, instr(address,'(')-1 )from employee_info
+
+following query shows how to use instr query and it is mainly used to find the position of an characters
+
+select instr(emppostion,'e',1,2) from employeeposition;
+
+instr(emppostion,'e',1,2) -- (1,2) means starting from 1 letter and second time appearing 'e'
+
+
+9. Write a query to fetch top N records
+
+select * from employeeposition order by salary desc fetch first row only;
+
+10. fetch salary hike amt for employees 
+note - for manager designation 50% hike rest of the designation 25%
+
+select e.first_name,t.title,s.salary, case when t.title = 'Manager' then (s.salary+s.salary*0.5) else(s.salary + s.salary*0.2) end as hike_amt from employees e join salaries s on e.emp_no=s.emp_no
+join Titles t on e.emp_title_id=t.title_id
+
+11.Write a query to get the current date.
+select sysdate from dual
+
+
+12. Write a query find number of employees whose DOB is between 02/05/1970 to 31/12/1975 and are grouped according to gender
+
+select gender,count(*) from employee_info where DOB between '02/05/1976' and '31/12/1994' group by gender
+
+
+13. Write a query to fetch all the records from the EmployeeInfo table ordered by EmpLname in descending order and Department in the ascending order.
+
+select * from employee_info order by department asc , empfname desc;
+ 
+  14 Write a query to fetch details of employees whose EmpLname ends with an alphabet ‘A’ and contains five alphabets.
+
+.SELECT * FROM Employee_Info WHERE EmpLname LIKE '%a' and length(emplname)=5 ;
+
+SELECT * FROM Employee_Info WHERE EmpLname LIKE '%a' and length(emplname)=5 ;
+
+15. Write a query to fetch details of all employees excluding the employees with first names, “Sanjay” and “Sonia” from the EmployeeInfo table.
+
+ select * from employee_info where empfname not in ('Sanjay','Sonia')
+ 
+ 16. Write a query to fetch all employees who also hold the managerial position.
+ 
+ select ei.empfname,ei.department,ep.emppostion from employee_info ei join employeeposition ep on ei.empid=ep.empid where emppostion='Manager' 
+ 
+ 17. Write a query to fetch the department-wise count of employees sorted by department’s count in ascending order.
+ 
+ select ei.department,count(*) as count from employee_info ei join employeeposition ep on ei.empid=ep.empid group by ei.department order by count asc
+ 
+ 18. Write a query to calculate the even and odd records from a table
+ 
+ to take even records use the below query
+ SELECT EmpID FROM (SELECT rownum rn, EmpID from Employee_Info) WHERE MOD(rn,2)=0;
+ use the below query for odd records 
+ SELECT EmpID FROM (SELECT rownum rn, EmpID from Employee_Info) WHERE MOD(rn,2)=1;
+ 
+ 
+ 19. Write a SQL query to retrieve employee details from EmployeeInfo table who have a date of joining in the EmployeePosition table.table
+ 
+ SELECT * FROM Employee_Info E 
+WHERE EXISTS 
+(SELECT * FROM EmployeePosition P WHERE E.EmpId = P.EmpId);
+
+20. Write a query to retrieve two minimum and maximum salaries from the EmployeePosition table.
+
+ select * from  (select firstname, salary, dense_rank() over (order by salary desc) as r_max,dense_rank() over (order by salary) as r_min from 
+(select ei.empid as empid,ei.empfname as firstname,max(distinct salary) as salary from 
+employee_info ei join employeeposition ep on ei.empid=ep.empid group by ei.empid,ei.empfname))a where r_max<2 or r_min<3
+
+21.Write a query to find the Nth highest salary from the table without using TOP/limit keyword.
+Training#123
+
+
+SELECT Salary 
+FROM EmployeePosition E1 
+WHERE N-1 = ( 
+      SELECT COUNT( DISTINCT ( E2.Salary ) ) 
+      FROM EmployeePosition E2 
+      WHERE E2.Salary >  E1.Salary );
+	  
+	  
+ 22  Write a query to retrieve duplicate records from a table.    
+SELECT EmpID, EmpFname, Department, COUNT(*) FROM Employee_Info GROUP BY EmpID, EmpFname, Department 
+HAVING COUNT(*) > 1;	  
+	  
+	 
+	  
+	  
+	  
+	  
+ 
+ 
+ 
+ 
+
+
+
+

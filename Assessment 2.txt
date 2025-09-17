@@ -1,0 +1,142 @@
+1. Select students who has read more books in library and rank them in descending.
+
+
+select name,Total_count, dense_rank() over (order by Total_count desc) as rank from (Select name,count(*) as Total_count from (select s.name as name,count(*) as count  from students s join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid group by s.name,bk.name order by s.name)a group by name)b 
+
+johnty query below
+
+select student_name,Total_count, dense_rank() over (order by Total_count desc) as rank from 
+(Select s.name as student_name,count(*) as Total_count from 
+ students s join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid group by s.name order by s.name)a  
+
+vishnu priya query below
+
+select s.name,count(*) as Count_of_students, dense_rank() over (order by count(*) desc) as Rank from students s
+join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid group by s.name
+
+2. Select the top three type of book that was most read by the students.
+
+select t.name as type_book,count(*) as count from students s join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid
+join types t on bk.typeid=t.typeid group by t.name order by count desc fetch next 3 rows only
+
+
+
+3.Get students fine for returning the after 15 days.Fine would be 5 rupees for each day delayed after 15th day.
+(Say for example if a student returns the book after 20days,fine for him would be 25 rupees)
+
+select student_name, sum(fine_amount)as Total_fine from 
+(select student_name,days_kept, case when days_kept > 15 then (days_kept-15) *5 else 0 end as fine_amount from 
+(select  s.name as student_name,b.broughtdate-b.takendate as days_kept 
+from students s join borrows b on s.studentid=b.studentid)a where days_kept>15) group by student_name order by student_name
+
+4.Select students who has bought books and not returned for 15days or more for 3 times for barring from library.
+
+select * from (select name, count(*) as count from 
+(select s.name,b.broughtdate-b.takendate as days_kept from students s join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid where b.broughtdate-b.takendate>15)a group by name order by name) where count>3
+
+vishnu priya query below
+select student_name from
+(select s.name as student_name, broughtdate-takendate as Days_kept 
+from students s
+join borrows b on s.studentid=b.studentid where broughtdate-takendate>15 ) group by student_name having count(*)>3 order by student_name;
+
+
+5.Select students who has bought an authors different books for more than 2 times(>2) from the library.
+
+select * from (select students, authors, count(*) as count from (select s.name as students,a.name as authors,bk.name as book_name, count(*) as count from students s join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid 
+join authors a on bk.authorid=a.authorid group by bk.name,a.name,s.name order by s.name)a group by students, authors) where count >2
+
+6. Select students who bought the same book for more than 1 time from library
+
+ select name,book_name,count from (select s.name as name,bk.name as book_name,count(*) as count  from students s join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid group by s.name,bk.name order by bk.name)a where count >1
+
+
+7.Select students who has born on 2001 and has boughts book for more than 6 times from library.
+
+select * from (select name as students_name,count(*) as count from(select s.name, birthdate, Extract(year from birthdate) as years 
+from students s join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid)a where years = 2001 group by name) where count >6
+
+
+8.Select the total pages read by a student of all the bookes he has taken from the library and rank it in descending order
+(Say if a student takes 10 books from library,out of which he has taken 1 book 2times then you should count the total pages for 9 books that he read)
+
+select name,sum(pagecount) as Total_pages, dense_rank() over (order by sum(pagecount) desc) as rank from 
+(select s.name,pagecount, count(*) as count from students s join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid group by s.name,pagecount having count (*) <=1 order by s.name)a group by name order by name
+
+vishnu priya query below
+
+select studentid,student_name, sum(pagecount) as Total_Pagecount, rank() over (order by sum(pagecount) desc) as Rank from
+(select distinct s.name as student_name,s.studentid, bk.name as book_name, bk.pagecount as pagecount from students s
+join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid order by s.name ) group by student_name,studentid;
+
+9. Select the total books read by students born in a particular year
+(if a student read the book more than 1 time,one count should be taken into account)
+
+vishnupriya query below
+
+select year_of_birth, sum(total) as total from (select studentid, student_name, year_of_birth, count(takendate) as Total from
+( select s.name as student_name,s.studentid, birthdate,bk.name,
+extract (year from birthdate)  as year_of_birth, takendate from students s
+join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid  ORDER BY BK.NAME,S.NAME)
+group by studentid, student_name, year_of_birth having count(takendate)>1 order by student_name) group by year_of_birth;
+
+
+10. Select the gender who has read more books from each class(ingore the count of repeated books for each gender 
+example:Say if 2 female students from the same class reads the same book,then it should be counted as 1 for that gender)
+
+select class,gender,gender_bk_count,rank() over(partition by class order by gender_bk_count desc) from
+(select class,gender,count(*) as gender_bk_count from 
+(select s.class as class,s.gender as gender,bk.name as book_name,count(*) as bk_count from students s
+join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid group by s.class,s.gender,bk.name) group by class,gender order by class,gender)
+
+
+[Yesterday 11:13] Vaisali B
+select class,gender,count(count_book) as gender_wise_count,rank()over (partition by class order by count(count_book) desc) as rank
+from
+(select s.class,s.gender,bk.name,count(*)as count_book
+from students s
+join borrows b on s.studentid=b.studentid
+join books bk on b.bookid=bk.bookid group by s.class,s.gender,bk.name)a
+group by class,gender order by class,gender
+ like 1
+
+
+
+11.student name more than 2 A and books name more the 2 e.
+
+select student_name,book_name from 
+ (select student_name,replace (upper (student_name), 'A','') as rep1,length (student_name) - length (replace (upper(student_name), 'A',''))as nameln,
+ book_name,replace(upper(book_name),'E', '')as rep2,length(book_name)-length (replace(upper(book_name),'E', ''))as bookln  from Assessment3) where nameln>1 and bookln>1
+
+
+
+12 finding the vowels from the students table;
+
+select * from(select name,
+case when
+instr(name,'a')=0 and instr(name,'e')=0 and instr(name,'i')=0 and instr(name,'o')=0 and instr(name,'u')=0
+then 'No Vowels'
+end 
+as name_vowels from students) where name_vowels is null;
+
+
+
+
+SELECT Name
+FROM Students
+WHERE REGEXP_LIKE (Name, '!^[aeiouAEIOU]')
+ORDER BY Name
+select * from students order by name;
+

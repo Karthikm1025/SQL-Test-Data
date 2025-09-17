@@ -1,0 +1,102 @@
+1.Select the female employee and male employee with maximum salary for each department and identify the difference between the two.
+
+
+[Yesterday 22:42] Karthik Mohan
+
+select k.dept_name,k.sex as male,k.salary as male_salary, m.sex as female,m.salary as female_salary, k.salary- m.salary as difference from (select dept_name, sex, salary from 
+(select Dept_name, sex, salary, rank() over (partition by dept_name order by salary desc) as rank from 
+(select dept_name, sex, max(salary) as salary from employees e join salaries s on e.emp_no = s.emp_no
+join DepartmentEmployees de on e.emp_no=de.emp_no
+join departments d on d.dept_no=de.dept_no where sex = 'M' group by dept_name, sex order by salary) a) b where rank = 1)k
+join
+(select dept_name, sex, salary from (select Dept_name, sex, salary, rank() over (partition by dept_name order by salary desc) as rank from 
+(select dept_name, sex, max(salary) as salary from employees e join salaries s on e.emp_no = s.emp_no
+join DepartmentEmployees de on e.emp_no=de.emp_no
+join departments d on d.dept_no=de.dept_no where sex = 'F' group by dept_name, sex order by salary) a)c where rank = 1)m on k.dept_name=m.dept_name
+
+
+[Yesterday 15:48] Vaisali B
+select v.dept_name,max_salary_male,max_salary_female ,max_salary_male-max_salary_female differnece from 
+(select d.dept_name,e.sex,max(salary)as max_salary_female from departments d 
+join departmentemployees de on d.dept_no = de.dept_no 
+join employees e on de.emp_no = e.emp_no
+join salaries s on e.emp_no = s.emp_no where sex = 'F'  group by d.dept_name,e.sex order by max(salary) desc)v
+join
+(select d.dept_name,e.sex,max(salary)as max_salary_male from departments d 
+join departmentemployees de on d.dept_no = de.dept_no 
+join employees e on de.emp_no = e.emp_no
+join salaries s on e.emp_no = s.emp_no where sex = 'M'  group by d.dept_name,e.sex order by max(salary) desc)g on v.dept_name = g.dept_name;
+
+
+2. Find the maximum salary of managers from each department and rank them(maximum salary should be rank 1)
+
+select dept_name, title, salary, rank() over ( order by salary desc ) as rank from (select dept_name, title, max(salary) as salary from employees e join salaries s on e.emp_no = s.emp_no
+join titles t on e.emp_title_id=t.title_id
+join DepartmentEmployees de on e.emp_no=de.emp_no
+join departments d on d.dept_no=de.dept_no 
+join departmentManager dm on d.dept_no=dm.dept_no where title = 'Manager' group by dept_name, title) a
+
+
+3. 3.Write a query to display the employee details in the below format
+
+	1.Employeename(jobtitle) eg. Arunkumar(Tester)
+	2.Employeename(Salary)   eg. Arunkumar(50000)   (Both the statements in the same query)
+	
+	
+	
+	
+	[11:44] Vishnupriya Mohan
+select emp_jobtitle, emp_salary from (select concat(cont2,')') as Emp_jobtitle, emp_no from (select concat(concat1,dept_name) as cont2, emp_no from (select concat(e.first_name,'(') as concat1, d.dept_name, e.emp_no from employees e
+join DepartmentEmployees de on e.emp_no=de.emp_no
+join Departments d on de.dept_no = d.dept_no)a)b) j 
+join
+(select concat(cont2,')')as Emp_salary, emp_no  from (select concat(concat1,salary) as cont2, emp_no from (select concat(e.first_name,'(') as concat1, s.salary, e.emp_no from employees e
+join salaries s on e.emp_no=s.emp_no)c)d) n on j.emp_no = n.emp_no
+
+[12:08] Vishnupriya Mohan
+select Job_title, salary from 
+(select concat(concat1,concat2)as Job_title, emp_no from
+(select concat(e.first_name,'(') as concat1, concat(d.dept_name,')') as concat2, d.dept_name, e.emp_no from employees e
+join DepartmentEmployees de on e.emp_no=de.emp_no
+join Departments d on de.dept_no = d.dept_no))a  
+join
+(select concat(concat1,concat2) as Salary, emp_no from 
+(select concat(e.first_name,'(') as concat1, concat(s.salary,')') as concat2,s.salary, e.emp_no from employees e
+join salaries s on e.emp_no=s.emp_no))b on a.emp_no =b.emp_no
+
+
+
+4.Display the salary as null for employees who has salary lesser than 60000,
+If it is greater than 60000 employee salary should be displayed as it is (result should have employee name and salary)
+
+select first_name,salary,case when salary<60000 then null else salary  end as q from employees e 
+join salaries s on e.emp_no = s.emp_no
+
+select first_name, case when salary <60000 then null else salary end as salary from employees e
+join salaries s on e.emp_no=s.emp_no
+
+5. Select the least salaried title(designation) combining all employees salary
+
+select * from (select title, salary, rank()over (order by salary ) as rank from 
+(select title,sum(salary)as salary from employees e join salaries s on e.emp_no=s.emp_no        
+join titles t on e.emp_title_id=t.title_id group by title)a) b where rank = 1
+
+6. Rank employees based on first letter of their first name
+
+for example: if the total employees name starts with A is 10 and Employees name starts with B is 20
+
+Result will be like B 20 1 , A 10 2 (B is rank 1 and A is rank 2)
+
+select first_letter,count,rank()over ( order by count desc )as rank from 
+(select substr(first_name,1,1)as first_letter,count(*) as count from employees group by substr(first_name,1,1))a
+
+select first_letter,count,rank()over ( order by count desc )as rank from 
+(select substr(first_name,1,1)as first_letter,count(*) as count from employees group by substr(first_name,1,1))a
+
+
+
+
+
+
+
+

@@ -1,0 +1,5 @@
+1. Create Table
+2. Insert Values
+3. ALter Table (Add Modify Drop)
+4. ORDER BY
+5. GROUP BY

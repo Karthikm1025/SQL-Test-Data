@@ -1,0 +1,148 @@
+problems solving
+
+19-12-2022
+
+1.Fetch female atheletes in a separate table name as female_person
+
+create table Female_person as select * from person where Gender ='F';
+    
+    select * from Femal_person
+	
+2. Fetch participants who won gold medal from Norway,America,Australia
+	
+select full_name, region_name,medal_name from (select  distinct  p.id,p.full_name,p.gender,pr.region_id,nc.region_name,gc.games_id,ce.medal_id,m.medal_name from person p 
+join person_region pr on p.id = pr.person_id
+join noc_region nc on nc.id = pr.region_id  Left join  games_competitor gc on p.id=gc.person_id join competitor_event ce on gc.id=ce.competitor_id
+join medal m on ce.medal_id=m.id) a where medal_name ='Gold' and region_name in ('Norway','USA','Australia');
+
+when user need to fetch how many participants won gold medal in overall region name
+
+select count(*) as participants, region_name from (select  distinct  p.id,p.full_name,p.gender,pr.region_id,nc.region_name,gc.games_id,ce.medal_id,m.medal_name from person p 
+join person_region pr on p.id = pr.person_id
+join noc_region nc on nc.id = pr.region_id  Left join  games_competitor gc on p.id=gc.person_id join competitor_event ce on gc.id=ce.competitor_id
+join medal m on ce.medal_id=m.id) a where medal_name ='Gold' group by Region_name;
+
+3. Fetch Participants whose name starts with 'A' including countries
+
+select p.id, p.full_name,p.gender,pr.region_id,nc.region_name from person p join person_region pr on p.id=pr.person_id
+join noc_region nc on pr.region_id=nc.id where full_name like ('A%')
+
+4.Fetch participants who has took part in any game but have not won any medals
+
+select p.id,p.full_name,gc.games_id,g.games_name,m.medal_name from person p join games_competitor gc on p.id=gc.person_id
+join games g on gc.games_id=g.id
+join competitor_event ce on gc.id=ce.competitor_id
+join medal m on ce.medal_id=m.id where Medal_Name = 'NA'
+v
+5.Fetch the total medal tally for each country and rank them in descending order.
+
+select region_name,count,rank () over(order by count desc) as rank from (SELECT region_name,count(*) as count FROM 
+(select region_name,medal_name from person
+JOIN person_region ON person.ID = person_region.person_id
+join noc_region ON person_region.region_id = noc_region.id
+join games_competitor ON person.ID = games_competitor.person_id
+join competitor_event ON games_competitor.id = competitor_event.competitor_id
+join  medal ON competitor_event.medal_id = medal.id where medal_name!='NA') 
+group by region_name)a;
+
+6. Fetch participants who won medals in more than one year's olympics.
+
+select full_name, count(*) as count from (select games_year, full_name, count(*) as count1 from ( select p.full_name, g.games_year from person p
+join games_competitor gc on p.id=gc.person_id
+join competitor_event ce on gc.id=ce.competitor_id
+join games g on gc.games_id=g.id
+join medal m on ce.medal_id=m.id where medal_name!='NA' )a group by games_year, full_name)b group by full_name having count(*)>1 ;
+
+7.Fetch participants who won more than one medals in the same year.
+
+select * from (select games_year, full_name,  count(*) as count from ( select p.full_name, g.games_year, m.medal_name from person p
+join games_competitor gc on p.id=gc.person_id
+join competitor_event ce on gc.id=ce.competitor_id
+join games g on gc.games_id=g.id
+join medal m on ce.medal_id=m.id where medal_name!='NA')a group by games_year, full_name )b where count > 1;
+
+
+
+8. Display countries with more female participants than male participants.
+
+select * from (select region_name,gender,count,rank() over (partition by region_name order by count desc) as rank 
+from (select region_name, gender, count(*) as count from person p join person_region pr on p.id = pr.person_id
+join noc_region nc on pr.region_id=nc.id group by region_name, gender order by region_name)a)b where gender='F' and Rank=1
+
+
+9.Display countries and  the year in which maximum medal each countires won.
+ 
+
+
+
+select region_name, games_year, count(*) as count 
+from person p join person_region pr on p.id = pr.person_id
+join noc_region nc on nc.id=pr.region_id
+join games_competitor gc on p.id=gc.person_id
+join games m on gc.games_id=m.id
+join competitor_event ce on gc.id=ce.competitor_id
+join medal m on ce.medal_id=m.id where medal_name!='NA' group by region_name,games_year order by count desc
+
+
+
+SELECT region_name,games_year,count(*) as count from person
+JOIN person_region ON person.ID = person_region.person_id
+join noc_region ON person_region.region_id = noc_region.id
+join games_competitor ON person.ID = games_competitor.person_id
+join competitor_event ON games_competitor.id = competitor_event.event_id
+Join games ON games_competitor.games_id = games.id
+join  medal ON competitor_event.medal_id = medal.id where medal_name!='NA' group by region_name,games_year order by count desc
+
+
+10.  Display participants who has participated in more than one olympics and atleast won one medal in any year
+
+
+select distinct c.full_name from (select full_name,count(*) from
+(select full_name, games_year from person p
+join games_competitor gc on p.id=gc.person_id
+join competitor_event ce on gc.id=ce.competitor_id
+join games g on gc.games_id=g.id group by full_name,games_year) group by full_name having count(*)>1)c 
+join person p1 on c.full_name=p1.full_name
+join games_competitor gc on p1.id=gc.person_id
+join competitor_event ce on gc.id=ce.competitor_id 
+join medal m on ce.medal_id=m.id where m.medal_name!='NA'
+
+
+26-12-2022
+
+
+1.Fetch the pervious  salary and the next salary of salary 74020 in sales department
+
+Select * from (select first_name,salary,lead(salary,2) over (order by salary) as lead_salary,lag(salary) over (order by salary) as lag_salary  
+from employees e
+join departmentEmployees de on e.emp_no = de.emp_no
+join departments d on de.dept_no = d.dept_no
+join salaries s on  e.emp_no = s.emp_no where dept_name='Sales' ORDER BY SALARY desc) a where salary=74020;
+
+
+2.Find employees age and experience from employees table
+
+select first_name,extract(year from current_date)-extract(year from birth_date) as Age,
+concat(extract(year from current_date)-extract(year from hire_date),'year')as experience from employees
+
+3. Find the first five and last five records from employees table using lag and lead functions where salary is in descending order
+
+select emp_no,salary,lead_salary,lag_salary from (select emp_no,salary,
+lead(salary,5) over (order by salary desc ) as lead_salary , 
+lag(salary,5) over ( order by salary desc  )as lag_salary 
+from salaries ) a where lead_salary IS NULL or lag_salary IS NULL
+
+
+4. Find the first five and last five records from employees table using lag and lead functions where salary is in descending order
+
+select emp_no,salary,lead_salary,lag_salary from (select emp_no,salary,
+lead(salary,5) over (order by salary desc ) as lead_salary , 
+lag(salary,5) over ( order by salary desc  )as lag_salary 
+from salaries ) a where lead_salary IS NULL or lag_salary IS NULL
+
+
+
+
+
+
+
