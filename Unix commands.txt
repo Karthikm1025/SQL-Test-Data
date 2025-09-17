@@ -1,0 +1,607 @@
+
+command
+command -[options]
+command -[options] input
+command input
+
+pwd
+--Present Working Dir
+--used to identify path of current folder
+
+ls--list
+used to list files and dir
+
+ls -p
+-p --path
+
+
+ls -ltr
+l--long
+t--time
+r--reverse
+h--human readable format
+S--sort mem size(in default order is desc)
+
+col1	file or dir permission 
+col2	files or dir linked 
+col3	user
+col4	group
+col5	memory size
+col6	created or modified time
+col7	file or dir
+note:
+if i create empty file mem of the file is zero
+if i create empty dir mem of the dir is 4k
+
+ls -ltr
+ls -lSrh
+
+How to find hidden files or dot files?
+ls -a
+
+How to list files and dir with time recverse?
+ls -ltr
+
+How to sort memory of files and dir?
+ls -lSrh
+
+
+Dir mauplaion
+mkdir---make dir
+cd--change dir
+
+mkdir d1
+rmdir d1
+
+How to create multiple dir?
+mkdir d1 d2 d3 d4
+
+How to remove multiple dir?
+---If i remove dir, it should be empty
+rmdir d1 d2 d3 d4
+
+(.)---current dir
+(..)--previous dir
+(../..)--2 step back
+cd	home dir
+
+How to create nested dir?
+d1/d2/d3/d4
+mkdir -p d1/d2/d3/d4/d5
+
+How to remove nested dir?
+d1/d2/d3/d4
+rm -r d1
+
+note
+if i want to remove empty dir i can use rmdir, 
+but is not an empty dir i have to use rm -r
+
+-r -- reg
+
+-----------------------------------------------------------
+
+File 
+
+how to crate empty file?
+touch file_name
+
+how to crate multiple empty file?
+touch file1 file2 file3
+
+
+how to remove file?
+rm file_name
+
+how to remove multiple files?
+rm file1 file2 file3
+
+How to view a file?
+cat file_name
+
+note:
+if we want to crate new empty file i have to use touch
+if file is already exists, created or modified time of file will be changed
+
+cat --create
+cat file_name -we can view file
+cat > file_name --create new file with line text or if file already exists info will replace
+cat >> file_name --create new file with line text or if file already exists info will append
+
+
+how to create non empty file?
+cat > file_name
+add info
+ctl+d---save
+
+or
+
+cat >> file_name
+add info
+ctl+d---save
+
+
+cat >>----append
+cat >---replace--redirect
+
+
+rm * --remove all files not dir
+
+rm *.txt --remove only text files
+
+rm file*  --remove files starting with pattern file
+
+head
+---first mentioned number of lines
+---in default it iwll take 10 line
+
+head file_name--10 lines
+head -5 file_name--5 lies
+
+tail
+--last mentioned number of lines in a file
+--in default i will take last 10 lies
+
+tail file_name--last 10 lines
+
+tail -5 file_name--last 5 lines
+
+wc
+--word count
+wc file_name
+lines  words  char
+--order cannor be change
+
+wc -lwc file_name
+
+l--lines
+w--words
+c--char
+
+reading command
+more 
+less
+
+more
+--it is auto terminated
+--we can find % read
+--we do only scroll down option
+
+enter---line by line down
+space---page by page down
+q--quit
+
+syntax
+more file_name
+more +5 file_name--starts with 5th line
+
+less
+--it is not an auto terminated
+--we cannot find % read
+--we do both scroll down and scroll up option
+
+enter---line by line down
+space---page by page down
+y--line by line up
+b--page by page up
+q--quit
+
+syntax
+less file_name
+
+--------------------------------------------------------
+
+| (Pipe)
+---we can combine multiple commands
+---output of first command will be given to input of next command
+---input will be in line format
+
+command1|command2|command3
+
+sin-1
+last 10 exec commands?
+history | tail -10
+
+grep
+--Global Regular Expression 
+--used to find pattern matched line in a single file 
+  or multiple files also
+
+syntax
+
+grep -[options] 'pattern' file_name
+
+gerp -w 'db' file_name
+
+-w--whole pattern(exact pattern match)
+-i--case in sens
+-v--except pattern matced lines
+-n--line number
+-c--count how many number of lines not number of pattern
+-A2--after 2 lines
+-B2--before 2 line
+-C2--centre--before and after 2 lines
+-l--ptint file_name
+
+how to find empty line in a file?
+grep -n '^$' file_name
+
+how to find pattern at staring of the file?
+grep -n '^pattern' file_name
+
+how to find pattern at end of the file?
+grep -n 'pattern$' file_name
+
+
+note:
+we can find single pattern with multiple files throuch 
+grep command 
+but if i want to search multiple pattern with multiple 
+files we have to use egrep
+
+egrep
+egrep -[options] 'pattern1|pattern2|patten3' file_name
+
+if i wnat to take pattern matched line in zipped file?
+
+`zgrep 
+
+how to view a zip file ?
+
+we have used to three methods  
+1)zcat
+2)unzip
+3)file_name.zip
+------------------------------------------------------
+
+find
+--used to search files or dir in current located dir as well as sub-dir also
+
+what is diff b/w find and ls?
+find
+--used to search files or dir in current located dir as well as sub-dir also
+
+ls
+--uesd to find files and dir in current located dir alone
+
+find . -type f
+
+find . -type f -name 'f1'
+
+find . -type f -iname 'F1'
+
+find . -type f -iname 'file*'--files starting with file pattern
+
+find . -type f -iname '*.txt'--only text files
+
+-type
+-name
+-iname
+-empty
+-size
+-mmin
+-mtime
+-amin
+-atime
+-exec
+-mindepth
+-maxdepth
+-prem
+
+
+how to find empty files?
+find . -type f -empty
+
+k
+G
+M
+
+find . -type f -size 1M--exact 1 MB
+find . -type f -size +1M--more than 1
+find . -type f -size -1M--less than 1
+
+-exec
+find . -type f -empty -exec ls -l {} \;
+
+diff b/w | and exec?
+
+m--modify
+a--access
+
+time--day
+min--minutes
+
+find . -type f -mtime 5
+find . -type f -mtime -5--last 5 days
+find . -type f -mtime +5-except last 5 days
+
+find . -type f -atime 5
+find . -type f -atime -5
+find . -type f -atime +5
+
+find . -type f -mmin 5
+find . -type f -mmin -5
+find . -type f -mmin +5
+
+find . -type f -amin 5
+find . -type f -amin -5
+find . -type f -amin +5
+
+du
+--disk usage
+--used to find dir and file space in currnt dir and sub dir also
+
+du -h
+du -a--files and dir
+du -s
+
+df
+--disk free
+--disk usage for entire file system
+
+df -h
+--------------------------------------------------
+
+vi
+
+syntax 
+vi file_name
+
+3 mode
+1.command mode--default mod
+2.insert mode
+3.exit mode
+
+l--right
+h--left
+j--down
+k--up
+5G--fifth line in a file
+G--last line in a file
+1G or gg--first line in a file
+
+
+How to get into insert mode?
+i--left insert
+I--starting of line
+a--insert right
+A--ending of line
+o--insert new line below
+O--insert new line above
+
+line
+delete
+dd
+
+replace
+cc
+
+word
+delete
+dw
+
+replace
+cw
+
+char
+delete
+x
+
+replace
+r
+
+yy--copy line
+p--paste
+
+u--undo
+
+exit mode
+exc:
+q--normal quit without save
+q!--fore quit without save
+wq--normal quit with save
+wq!--force quit with save
+------------------------------
+how to search pattern in vi eritor?
+esc
+:s/pattern
+
+i have tpo replace error as success in through out the file?
+esc
+:s/error/success/g
+
+:3 s/error/success/g
+:3 s/error/success/2
+
+:database s/error/success/g
+
+g--global
+---------------------------------
+
+ sed
+
+print
+repalce
+delete
+append
+
+print
+--for pint -n is mandatory
+
+sed -n '1p' file_name--print only first line
+sed -n '1!p' file_name--print only except first line
+sed -n '3,7p' file_name--print 3 to 7 lines(range)
+
+note:
+1.we cannot able to print only 3 and 7 line sed option will take range of lines
+2.if i want print pattern mateched lines i have to mention pattern in /pattern/
+
+sed -n '/pattern/p' file_name--print patten matched line
+
+sed -n '/^pattern/p' file_name--print pattern at starting of line
+
+sed -n '/pattern$/p' file_name--print pattern at end of the line
+
+sed -n '/^$/p' file_name--print empty line in a file
+
+
+replace
+
+p--s/pattern1/pattern2/g
+g--global occurance of each and every line
+-i--- replace permonent
+
+sed 's/db/***/g' file_name--replace db as *** in all the lines and acc
+sed 's/db/***/2' file_name--replace db as *** in all the lines and in 2nd acc
+sed '1 s/db/***/g' file_name--replace db as *** first line and all the acc
+sed '1 s/db/***/2' file_name--replace db as *** first line and only 2 acc
+sed '/pattern/ s/db/***/2' file_name--replace db as ***  pattern matcehd line line and only in 2 acc---IQ
+
+sed -i '/sony/ s/error/success/g' file_name
+
+How to replace empty line?
+sed 's/^$/line/g' file_name
+
+delete
+p==d
+sed '1d' file_name--delete only first line
+sed '3,7d' file_name--delete 3 to 7 lines(range)
+sed '/pattern/d' file_name--delete patten matched line
+sed '/^pattern/d' file_name--delete pattern at starting of line
+sed '/pattern$/d' file_name--delete pattern at end of the line
+sed '/^$/d' file_name--delete empty line in a file
+
+------------------------------------
+count of empty files?
+find . -type f -empty | wc -l
+
+remove all empty files?
+find . -type f -empty -exec rm -f {} \;
+
+I dont know the file name but i know the pattern of file?
+find . -type f -exec grep -w 'pattern' {} \;
+
+Number of files created last 10 days?
+find . -type f -mtime -10 | wc -l
+
+------------------------------------------------------------
+
+cp (copy)
+
+file
+
+syntax
+
+cp file_name destination_path
+
+dir
+
+cp -r dir_name destination_path
+
+mv
+--move
+
+file
+mv file_name destination_path
+
+dir
+
+mv dir_name dir_name
+
+rename
+file
+mv file_name file_name
+
+rename
+mv dir_name dir_name
+----------------------------------------------------------------
+
+awk
+--used to access rows and columns in a file
+
+awk -[options]{operations} file_name
+
+awk -fd',' {operations} file_name
+
+column
+awk '{print $0}' file_name--print all column
+awk '{print $2}' file_name--print 2nd column
+awk '{print $2 $5}' file_name--print 2 and 5 column with out delimiter
+awk '{print $2,$5}' file_name--print 2 and 5 column with space delimiter
+awk '{print NF}' file_name--print total number of fields--NF--> number of fields
+awk '{print $NF}' file_name--print last field
+awk '{print $(NF-1)}' file_name---print last one before field
+
+row
+awk 'NR==2 {print $0}' file_name---print 2nd row
+awk 'NR==2 {print $2}' file_name---print 2nd row in 2nd column
+awk 'NR==2,NR==5 {print $0}' file_name---print range of 2 to 5 row
+awk 'NR==2;NR==5 {print $0}' file_name---print 2nd and 5th row
+
+filter condition
+
+awk '/pattern/ {print $0}' file_name--search pattern in global
+awk '/pattern1|pattern2/ {print $0}' file_ame----search dual pattern in global
+awk '$3~/pattern/ {print $0}' file_name---search pattern in 3rd field---IQ
+
+
+awk '$4==$5{print $0}' file_name---compare 4th and 5th column
+awk '{print length($3)}' file_name---find length of 3rd column
+
+
+chmod
+--change mode
+
+----------
+
+user
+rwx
+group
+rwx
+others
+rwx
+
+read 4
+write 2
+exec 1
+
+ugr
+
+chmod 635 file_name
+
+664
+
+chmod ugo+rwx file_name
+
++-->add
+- -->remove
+= -->replace
+
+-----------------------------------------------
+
+Linux command 
+
+1) Who command in linux 
+
+---> it's used to login name of the user 
+1-->Time of the last system boot 
+2-->current run level of the system
+
+2) Uptime
+
+--> how long the system running after re-boot and number of user 
+logged into.
+
+3)whoami
+
+-->its used to identify the current user .
+
+4) $0
+
+--> its used to get exit status of the most recently executed command 
+    in a foreground
+
+--> by using this you can check whether your bash script is completed 
+	successfuly or not.
+
+--------------------------------------------------------------------------

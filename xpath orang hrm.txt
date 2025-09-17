@@ -1,0 +1,39 @@
+/html/body/div/div[1]/div[1]/aside/nav/div[2]/ul/li[8]/a
+
+
+<a data-v-6475d26d="" class="oxd-main-menu-item active" href="/dashboard/index">
+<a data-v-6475d26d="" class="oxd-main-menu-item active" href="/Directory/index">
+
+In dom there are similar anchor tags with slight difference change in the name of xpath
+
+now i am found an xpath - //a[@class='oxd-main-menu-item active'] and which selecting the below xpath 
+<a data-v-6475d26d="" class="oxd-main-menu-item active" href="/dashboard/index">
+
+but i need the following xpath to be selected - <a data-v-6475d26d="" class="oxd-main-menu-item active" href="/Directory/index">
+
+due to this i am getting no such element error for upcoming methods i have written 
+
+now help me how to customize my xpath to select directory link xpath
+
+//a[@class='oxd-main-menu-item active' and contains(@href, '/directory/viewDirectory')]
+
+/html/body/div/div[1]/div[1]/aside/nav/div[2]/ul/li[9]/a
+
+two dropdown field has same xpath, now i can difference it and automate it to select the drodown i perfer to click it
+Xpath:
+div data-v-67d2aedf="" class="oxd-select-text-input" tabindex="0">-- Select --</div>
+
+
+//div [@class ='oxd-input-group__label-wrapper']//following::div[@class='oxd-select-text-input' and @tabindex='0']
+//div [@class ='oxd-select-text oxd-select-text--active']//following::div[@class='oxd-select-text-input' and @tabindex='0']
+
+//div [@class ='oxd-select-text oxd-select-text--active']//following::div[@class='oxd-select-text-input' and @tabindex='0']
+
+//*[@class='oxd-select-text oxd-select-text--active']//parent::*[@class='oxd-select-wrapper']/..//div//label[text()='Job Title']
+//*[@class='oxd-select-text oxd-select-text--active']//parent::*[@class='oxd-select-wrapper']/..//preceding-sibling::*//label[text()='Job Title']
+([oxd-select-text--active']//parent::*[@class='oxd-select-wrapper'])[1]
+
+//label[text()='Job Title']//following::div
+(//label[text()='Job Title']//following::div[@class='oxd-select-text-input'])[2]
+
+//*[text()='HR Manager']

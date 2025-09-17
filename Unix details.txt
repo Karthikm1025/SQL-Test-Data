@@ -1,0 +1,9 @@
+
+unix VM details
+
+ 
+
+Ip:  192.168.47.27
+Username : labuser1
+Password : Mav@2021
+

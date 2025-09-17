@@ -1,0 +1,58 @@
+1).Difference between . and ..
+(.) current dir
+(..) Previouse dir
+
+
+
+2.What is for cat command?
+Cat is max read the data
+cat --Concat
+cat file_name -we can view file
+cat > file_name --create new file with line text or if file already exists info will replace
+cat >> file_name --create new file with line text or if file already exists info will append
+
+
+
+3)In a file, india word is repeating – how will you change it to Capital letter?
+By using SED
+sed 's/india/INDIA/g' file_name
+
+
+
+4)Remove a subdirectory and its files
+rm-r and dirname
+
+
+
+5)Word india – how many times appeared in a file?
+Grep-N 'India' and filename|wc-l
+
+
+
+
+6)Replace word – abcd to xyz
+sed 's/abcd/xyz/g' file_name--replace db as *** in all the lines and acc
+
+
+
+7)Diff between cat and more command
+Cat mean just read the file and
+More commnd also read the file and also
+--it is auto terminated
+--we can find % read
+--we do only scroll down option
+
+
+
+8)How ll u create a file in unix?
+by using touch
+cat
+vi
+
+
+
+9)will you open a read only file?
+
+
+
+By using cat command
